@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-[CreateAssetMenu(fileName = "Card", menuName = "ScriptableObjects/CardScriptableObject", order = 1)]
+[CreateAssetMenu(fileName = "Card", menuName = "CardScriptableObject", order = 1)]
 public class CardSO : ScriptableObject
 {
-    public int Id;
+    public int id;
     public Sprite cardSprite;
 
 
@@ -17,14 +17,14 @@ public class CardSO : ScriptableObject
 #if UNITY_EDITOR
     private void OnEnable()
     {
-        if (Id != 0) return;
+        if (id != 0) return;
 
         AssignID();
     }
 
     private void OnValidate()
     {
-        if (Id != 0) return;
+        if (id != 0) return;
 
         AssignID();
     }
@@ -41,11 +41,11 @@ public class CardSO : ScriptableObject
 
             if (card != null && card != this)
             {
-                maxId = Mathf.Max(maxId, card.Id);
+                maxId = Mathf.Max(maxId, card.id);
             }
         }
 
-        Id = maxId + 1;
+        id = maxId + 1;
         EditorUtility.SetDirty(this);
     }
 #endif
