@@ -74,26 +74,23 @@ public class CardManager : MonoBehaviour
 
     void TryMatchingCards(Card card1)
     {
-
+        if (lastClickedCard == card1) return;
         if (lastClickedCard == null)
         {
-            lastClickedCard = card1;
-            return;
+            lastClickedCard = card1; return;
         }
         if (card1.id == lastClickedCard.id)
         {
             card1.Matched();
             lastClickedCard.Matched();
+            lastClickedCard = null;
             Debug.Log("Cards Matched!");
         }
         else
         {
             card1.Unflip();
             lastClickedCard.Unflip();
-            Debug.Log("Cards did not match.");
-            // Implement mismatch logic (e.g., flip cards back)
+            lastClickedCard = null;
         }
-        lastClickedCard = card1;
-        // Implement matching logic here
     }
 }
