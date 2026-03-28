@@ -2,24 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Card : MonoBehaviour, IPointerClickHandler
 {
-    // Start is called before the first frame update
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    [SerializeField] private Image cardSprite;
+    int id = -1;
 
     public void OnPointerClick(PointerEventData eventData)
     {
         Debug.Log("Card Clicked");
+    }
+
+    public void SetCardData(Sprite sprite, int cardId)
+    {
+        id = cardId;
+        cardSprite.sprite = sprite;
     }
 
 }
