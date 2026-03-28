@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16b19e13c7e8ef3409c602c578eedbc7, type: 3}
+  m_Name: TreePack
+  m_EditorClassIdentifier: 
+  cardSOList:
+  - {fileID: 11400000, guid: f3fe6af80d837f44797239eea278bd5d, type: 2}
+  - {fileID: 11400000, guid: f028eb8bca5cd35419ab06c5263a14c7, type: 2}
+  - {fileID: 11400000, guid: 148dc5fecc08a254fafe4c81b9d8677b, type: 2}
+  - {fileID: 11400000, guid: 3de3abad70655f842bd5370a73135866, type: 2}
+  - {fileID: 11400000, guid: 46f7fad5aaeb99c43a38d8e7683f2d51, type: 2}
+  - {fileID: 11400000, guid: 72cb895008a0f4c43a8b024597b148ac, type: 2}
+  - {fileID: 11400000, guid: 3db1c1f40bcb7b942b1ffd7c61932d91, type: 2}
+  - {fileID: 11400000, guid: c3b3e5845a7d3d7419aad72c9f38e062, type: 2}
+  - {fileID: 11400000, guid: 2df96db3e5503094b81bd46dc3ba247d, type: 2}
+  - {fileID: 11400000, guid: ca7452e871d53324c950e583d64d2512, type: 2}
