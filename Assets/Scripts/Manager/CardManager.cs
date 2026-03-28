@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +6,7 @@ public class CardManager : MonoBehaviour
 {
 
     public static CardManager Instance { get; private set; }
-    public List<CardSO> cardSOList;
+    public AssetPackSO assetPack;
 
     public static Action OnGameInit;
     public static Action<Card> OnCardsClicked;
@@ -37,7 +36,7 @@ public class CardManager : MonoBehaviour
     {
         int totalCards = GameManager.Instance.GetTotalCards();
 
-        if (cardSOList.Count < totalCards)
+        if (assetPack.cardSOList.Count < totalCards)
         {
             Debug.LogError("Not enough card data to fill the grid!");
             return;
@@ -48,8 +47,8 @@ public class CardManager : MonoBehaviour
         // Create pairs
         for (int i = 0; i < totalCards; i++)
         {
-            shuffledList.Add(cardSOList[i]);
-            shuffledList.Add(cardSOList[i]);
+            shuffledList.Add(assetPack.cardSOList[i]);
+            shuffledList.Add(assetPack.cardSOList[i]);
         }
 
         // Shuffle
