@@ -7,13 +7,13 @@ public class CardManager : MonoBehaviour
 {
 
     public static CardManager Instance { get; private set; }
-
-
     public List<CardSO> cardSOList;
 
     public static Action OnGameInit;
-
+    public static Action<Card> OnCardsClicked;
     public Card cardPrefab;
+
+    private Card lastClickedCard = null;
 
     void Awake()
     {
@@ -24,7 +24,8 @@ public class CardManager : MonoBehaviour
         }
 
         OnGameInit += InitGameCards;
-        InitGameCards();
+        OnCardsClicked += TryMatchingCards;
+        // InitGameCards();
     }
 
     void OnDisable()
@@ -34,11 +35,65 @@ public class CardManager : MonoBehaviour
 
     public void InitGameCards()
     {
-        foreach (CardSO cardSO in cardSOList)
+        int totalCards = GameManager.Instance.GetTotalCards();
+
+        if (cardSOList.Count < totalCards)
         {
-            Debug.Log($"Card ID: {cardSO.Id}, Sprite: {cardSO.cardSprite.name}");
-            Card cardGO = Instantiate(cardPrefab, FindAnyObjectByType<Canvas>().transform);
-            cardGO.SetCardData(cardSO.cardSprite, cardSO.Id);
+            Debug.LogError("Not enough card data to fill the grid!");
+            return;
         }
+
+        List<CardSO> shuffledList = new List<CardSO>();
+
+        // Create pairs
+        for (int i = 0; i < totalCards; i++)
+        {
+            shuffledList.Add(cardSOList[i]);
+            shuffledList.Add(cardSOList[i]);
+        }
+
+        // Shuffle
+        Shuffle(shuffledList);
+
+        // Instantiate
+        foreach (var cardSO in shuffledList)
+        {
+            Card newCard = Instantiate(cardPrefab, GameManager.Instance.GetLayoutGroupTransform());
+            newCard.SetCardData(cardSO.cardSprite, cardSO.id);
+        }
+    }
+
+    void Shuffle(List<CardSO> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, i + 1);
+            (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
+        }
+    }
+
+    void TryMatchingCards(Card card1)
+    {
+
+        if (lastClickedCard == null)
+        {
+            lastClickedCard = card1;
+            return;
+        }
+        if (card1.id == lastClickedCard.id)
+        {
+            card1.Matched();
+            lastClickedCard.Matched();
+            Debug.Log("Cards Matched!");
+        }
+        else
+        {
+            card1.Unflip();
+            lastClickedCard.Unflip();
+            Debug.Log("Cards did not match.");
+            // Implement mismatch logic (e.g., flip cards back)
+        }
+        lastClickedCard = card1;
+        // Implement matching logic here
     }
 }
