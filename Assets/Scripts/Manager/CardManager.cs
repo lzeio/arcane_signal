@@ -14,6 +14,9 @@ public class CardManager : MonoBehaviour
 
     private Card lastClickedCard = null;
 
+
+    [SerializeField] public Sprite backSprite;
+
     void Awake()
     {
         Instance = this;

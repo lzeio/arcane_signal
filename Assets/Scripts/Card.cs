@@ -6,12 +6,13 @@ using UnityEngine.EventSystems;
 public class Card : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private Image cardSprite;
-    [SerializeField] private Sprite backSprite;
+
+    //can be set from Cardmanager as this wil save the reference to sprite for each card
     [SerializeField] private Sprite frontSprite;
     public int id = -1;
 
     [SerializeField] private float flipDuration = 0.15f;
-    [SerializeField] private float flipDelay = 0f;
+
     void OnEnable()
     {
         Unflip(null, 3f); // Start with cards face down
@@ -65,7 +66,7 @@ public class Card : MonoBehaviour, IPointerClickHandler
         transform.localScale = new Vector3(0f, 1f, 1f);
 
         // Swap
-        cardSprite.sprite = showFront ? frontSprite : backSprite;
+        cardSprite.sprite = showFront ? frontSprite : CardManager.Instance.backSprite;
 
         // Show
         for (float t = 0; t < flipDuration; t += Time.deltaTime)
