@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
     {
         CardManager.OnCardClicked += IncrementTurnCount;
         CardManager.OnCardsMatched += IncrementMatchCount;
+        CardManager.OnGameLoaded += LoadGame;
     }
     void OnDisable()
     {
@@ -77,5 +78,14 @@ public class GameManager : MonoBehaviour
         OnMatchChanged?.Invoke(matchCount);
     }
 
+
+    private void LoadGame()
+    {
+        GameData data = SaveLoadManager.Instance.LoadGame();
+        turnCount = data.turnCount;
+        matchCount = data.matchCount;
+        OnTurnChanged?.Invoke(turnCount);
+        OnMatchChanged?.Invoke(matchCount);
+    }
 }
 
