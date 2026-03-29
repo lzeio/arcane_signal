@@ -31,7 +31,7 @@ public class CardManager : MonoBehaviour
         OnCardClicked += HandleCardClick;
     }
 
-    void OnDestroy()
+    void OnDisable()
     {
         OnGameInit -= InitGameCards;
         OnCardClicked -= HandleCardClick;
