@@ -1,98 +1,116 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CardManager : MonoBehaviour
 {
-
     public static CardManager Instance { get; private set; }
-    public AssetPackSO assetPack;
 
     public static Action OnGameInit;
-    public static Action<Card> OnCardsClicked;
-    public Card cardPrefab;
+    public static Action<Card> OnCardClicked;
 
-    private Card lastClickedCard = null;
+    [SerializeField] private AssetPackSO assetPack;
+    [SerializeField] private Card cardPrefab;
+    public Sprite backSprite;
 
-
-    [SerializeField] public Sprite backSprite;
+    private Card firstSelected;
+    private bool isBusy;
 
     void Awake()
     {
-        Instance = this;
-        if (Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
-        }
-
-        OnGameInit += InitGameCards;
-        OnCardsClicked += TryMatchingCards;
-        // InitGameCards();
-    }
-
-    void OnDisable()
-    {
-        OnGameInit -= InitGameCards;
-    }
-
-    public void InitGameCards()
-    {
-        int totalCards = GameManager.Instance.GetTotalCards();
-
-        if (assetPack.cardSOList.Count < totalCards)
-        {
-            Debug.LogError("Not enough card data to fill the grid!");
             return;
         }
 
-        List<CardSO> shuffledList = new List<CardSO>();
+        Instance = this;
 
-        // Create pairs
-        for (int i = 0; i < totalCards; i++)
+        OnGameInit += InitGameCards;
+        OnCardClicked += HandleCardClick;
+    }
+
+    void OnDestroy()
+    {
+        OnGameInit -= InitGameCards;
+        OnCardClicked -= HandleCardClick;
+    }
+
+    private void InitGameCards()
+    {
+        int pairCount = GameManager.Instance.GetTotalCards();
+
+        if (assetPack.cardSOList.Count < pairCount)
         {
-            shuffledList.Add(assetPack.cardSOList[i]);
-            shuffledList.Add(assetPack.cardSOList[i]);
+            Debug.LogError("Not enough card data!");
+            return;
         }
 
-        // Shuffle
-        Shuffle(shuffledList);
+        List<CardSO> deck = CreateShuffledDeck(pairCount);
 
-        // Instantiate
-        foreach (var cardSO in shuffledList)
+        foreach (var cardSO in deck)
         {
-            Card newCard = Instantiate(cardPrefab, GameManager.Instance.GetLayoutGroupTransform());
-            newCard.SetCardData(cardSO.cardSprite, cardSO.id);
+            Card card = Instantiate(cardPrefab, GameManager.Instance.GetLayoutGroupTransform());
+            card.SetCardData(cardSO.cardSprite, cardSO.id);
         }
     }
 
-    void Shuffle(List<CardSO> list)
+    private List<CardSO> CreateShuffledDeck(int pairCount)
+    {
+        List<CardSO> deck = new();
+
+        for (int i = 0; i < pairCount; i++)
+        {
+            var cardData = assetPack.cardSOList[i];
+            deck.Add(cardData);
+            deck.Add(cardData);
+        }
+
+        Shuffle(deck);
+        return deck;
+    }
+
+    private void Shuffle(List<CardSO> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
         {
-            int randomIndex = UnityEngine.Random.Range(0, i + 1);
-            (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
+            int rand = UnityEngine.Random.Range(0, i + 1);
+            (list[i], list[rand]) = (list[rand], list[i]);
         }
     }
 
-    void TryMatchingCards(Card card1)
+    private void HandleCardClick(Card clicked)
     {
-        if (lastClickedCard == card1) return;
-        if (lastClickedCard == null)
+        if (isBusy || clicked == firstSelected) return;
+
+        if (firstSelected == null)
         {
-            lastClickedCard = card1; return;
+            firstSelected = clicked;
+            return;
         }
-        if (card1.id == lastClickedCard.id)
+
+        StartCoroutine(CheckMatch(clicked));
+    }
+
+    private IEnumerator CheckMatch(Card second)
+    {
+        isBusy = true;
+
+        yield return new WaitForSeconds(0.5f);
+
+        if (second.id == firstSelected.id)
         {
-            card1.Matched();
-            lastClickedCard.Matched();
-            lastClickedCard = null;
-            Debug.Log("Cards Matched!");
+            second.Matched();
+            firstSelected.Matched();
         }
         else
         {
-            card1.Unflip();
-            lastClickedCard.Unflip();
-            lastClickedCard = null;
+            second.Unflip();
+            firstSelected.Unflip();
         }
+
+        firstSelected = null;
+        isBusy = false;
     }
 }
