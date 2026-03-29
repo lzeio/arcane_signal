@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CardManager : MonoBehaviour
@@ -65,9 +66,30 @@ public class CardManager : MonoBehaviour
 
     private void LoadGameCards()
     {
-        // Placeholder for loading saved game state
-        // Would need to track flipped/matched states and reapply them here
-        Debug.Log("LoadGameCards called - implement save/load logic here");
+        GameData data = SaveLoadManager.Instance.LoadGame();
+        if (data == null)
+        {
+            Debug.LogError("Failed to load game data!");
+            return;
+        }
+
+        foreach (var cardData in data.cards)
+        {
+            CardSO cardSO = assetPack.cardSOList.Find(c => c.id == cardData.id);
+            if (cardSO == null)
+            {
+                Debug.LogError($"CardSO with ID {cardData.id} not found!");
+                break;
+            }
+
+            Card card = Instantiate(cardPrefab, GameManager.Instance.GetLayoutGroupTransform());
+            card.Init(cardSO.cardSprite, cardSO.id);
+
+            if (cardData.isMatched)
+                card.Matched();
+
+            allCards.Add(card);
+        }
     }
 
     private List<CardSO> CreateShuffledDeck(int pairCount)

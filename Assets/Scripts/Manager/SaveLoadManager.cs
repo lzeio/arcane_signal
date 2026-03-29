@@ -28,6 +28,12 @@ public class SaveLoadManager : MonoBehaviour
             cards = new List<CardData>()
         };
         CardManager.OnCardClicked += SaveGame;
+        CardManager.OnCardsMatched += SaveGame;
+    }
+
+    public void SaveGame()
+    {
+        SaveGame(null);
     }
     public void SaveGame(Card _)
     {
@@ -41,6 +47,7 @@ public class SaveLoadManager : MonoBehaviour
         for (int i = 0; i < cards.Count; i++)
         {
             Card card = cards[i];
+
 
             _gameData.cards.Add(new CardData
             {

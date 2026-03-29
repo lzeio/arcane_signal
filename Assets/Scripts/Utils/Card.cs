@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 
 public class Card : MonoBehaviour, IPointerClickHandler
 {
@@ -89,12 +90,13 @@ public class Card : MonoBehaviour, IPointerClickHandler
     }
     private void OnFlipComplete(Card card)
     {
-        Debug.Log("Flip Complete: " + card.id);
+        Debug.Log("Flip Complete: " + card.isMatched);
         CardManager.OnCardClicked?.Invoke(card);
     }
 
     public void Matched()
     {
+        Debug.Log("Card Matched: " + id);
         cardSprite.enabled = false;
         isMatched = true;
     }
