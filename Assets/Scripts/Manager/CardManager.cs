@@ -9,6 +9,7 @@ public class CardManager : MonoBehaviour
 
     // Events
     public static Action OnGameInit;
+    public static Action OnGameLoaded;
     public static Action<Card> OnCardClicked;
     public static Action OnCardsMatched;
 
@@ -17,8 +18,7 @@ public class CardManager : MonoBehaviour
     [SerializeField] private Card cardPrefab;
     [SerializeField] private Sprite backSprite;
 
-    private Card firstSelected;
-
+    private List<Card> selectionBuffer = new List<Card>();
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -30,12 +30,14 @@ public class CardManager : MonoBehaviour
         Instance = this;
 
         OnGameInit += InitGameCards;
+        OnGameLoaded += LoadGameCards;
         OnCardClicked += HandleCardClick;
     }
 
     void OnDisable()
     {
         OnGameInit -= InitGameCards;
+        OnGameLoaded -= LoadGameCards;
         OnCardClicked -= HandleCardClick;
     }
 
@@ -56,6 +58,13 @@ public class CardManager : MonoBehaviour
             Card card = Instantiate(cardPrefab, GameManager.Instance.GetLayoutGroupTransform());
             card.Init(cardSO.cardSprite, cardSO.id);
         }
+    }
+
+    private void LoadGameCards()
+    {
+        // Placeholder for loading saved game state
+        // Would need to track flipped/matched states and reapply them here
+        Debug.Log("LoadGameCards called - implement save/load logic here");
     }
 
     private List<CardSO> CreateShuffledDeck(int pairCount)
@@ -84,32 +93,37 @@ public class CardManager : MonoBehaviour
 
     private void HandleCardClick(Card clicked)
     {
-        if (clicked == firstSelected) return;
+        if (selectionBuffer.Contains(clicked)) return;
+        selectionBuffer.Add(clicked);
 
-        if (firstSelected == null)
+        if (selectionBuffer.Count >= 2)
         {
-            firstSelected = clicked;
-            return;
+            Card first = selectionBuffer[0];
+            Card second = selectionBuffer[1];
+
+            selectionBuffer.RemoveRange(0, 2);
+
+            StartCoroutine(CheckMatchRoutine(first, second));
         }
-
-        Card first = firstSelected;
-        firstSelected = null;
-
-        CheckMatch(first, clicked);
     }
 
-    private void CheckMatch(Card first, Card second)
+    private IEnumerator CheckMatchRoutine(Card first, Card second)
     {
-        if (second.id == first.id)
+        // Optional: wait for flip animation to finish
+        yield return new WaitUntil(() => !first.IsFlipping && !second.IsFlipping);
+
+        if (first.id == second.id)
         {
-            second.Matched();
             first.Matched();
+            second.Matched();
             OnCardsMatched?.Invoke();
         }
         else
         {
-            second.Unflip();
+            yield return new WaitForSeconds(0.3f); // small delay feels good
+
             first.Unflip();
+            second.Unflip();
         }
     }
     public Sprite GetBackSprite() => backSprite;

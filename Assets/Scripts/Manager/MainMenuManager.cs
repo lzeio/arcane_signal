@@ -10,20 +10,30 @@ public class MainMenuManager : MonoBehaviour
 
     [SerializeField] GameObject mainMenuPanel;
     [SerializeField] Button PlayButton;
+    [SerializeField] Button ResumeButton;
     void OnEnable()
     {
         PlayButton.onClick.AddListener(OnPlayButtonClicked);
+        ResumeButton.onClick.AddListener(OnResumeButtonClicked);
+
     }
 
     void OnDisable()
     {
         PlayButton.onClick.RemoveListener(OnPlayButtonClicked);
+        ResumeButton.onClick.RemoveListener(OnResumeButtonClicked);
     }
 
     public void OnPlayButtonClicked()
     {
         mainMenuPanel.SetActive(false);
         CardManager.OnGameInit?.Invoke();
+    }
+
+    public void OnResumeButtonClicked()
+    {
+        mainMenuPanel.SetActive(false);
+        CardManager.OnGameLoaded?.Invoke();
     }
 
 

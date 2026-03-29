@@ -7,10 +7,11 @@ public class Card : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private Image cardSprite;
     [SerializeField] private Sprite frontSprite;
+
     public int id = -1;
 
     [SerializeField] private float flipDuration = 0.15f;
-
+    public bool IsFlipping => isFlipping;
     public void OnPointerClick(PointerEventData eventData)
     {
         if (isFlipping) return;
