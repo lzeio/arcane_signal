@@ -10,6 +10,7 @@ public class CardManager : MonoBehaviour
     // Events
     public static Action OnGameInit;
     public static Action<Card> OnCardClicked;
+    public static Action OnCardsMatched;
 
     // Inspector fields 
     [SerializeField] private AssetPackSO assetPack;
@@ -17,7 +18,6 @@ public class CardManager : MonoBehaviour
     [SerializeField] private Sprite backSprite;
 
     private Card firstSelected;
-    private bool isBusy;
 
     void Awake()
     {
