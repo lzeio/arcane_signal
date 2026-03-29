@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI matchCounterText;
     [SerializeField] private TextMeshProUGUI turnCounterText;
     [SerializeField] private TextMeshProUGUI comboCounterText;
+    [SerializeField] private TextMeshProUGUI gameOverText;
 
     void Awake()
     {
@@ -16,6 +17,8 @@ public class UIManager : MonoBehaviour
         GameManager.OnMatchChanged += UpdateMatchCounter;
         GameManager.OnMatchChanged += UpdateComboCounter;
         GameManager.OnComboChanged += DisableComboCounter;
+
+        GameManager.OnGameOver += HandleGameOver;
     }
 
     void OnDisable()
@@ -24,6 +27,7 @@ public class UIManager : MonoBehaviour
         GameManager.OnMatchChanged -= UpdateMatchCounter;
         GameManager.OnMatchChanged -= UpdateComboCounter;
         GameManager.OnComboChanged -= DisableComboCounter;
+        GameManager.OnGameOver -= HandleGameOver;
     }
 
     private void UpdateTurnCounter(int turns)
@@ -50,5 +54,16 @@ public class UIManager : MonoBehaviour
     private void DisableComboCounter()
     {
         comboCounterText.gameObject.SetActive(false);
+    }
+
+
+    private void HandleGameOver()
+    {
+
+        gameOverText.gameObject.SetActive(true);
+        matchCounterText.gameObject.SetActive(false);
+        turnCounterText.gameObject.SetActive(false);
+        comboCounterText.gameObject.SetActive(false);
+
     }
 }

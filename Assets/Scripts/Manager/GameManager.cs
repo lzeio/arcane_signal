@@ -16,8 +16,9 @@ public class GameManager : MonoBehaviour
 
     public static Action<int> OnTurnChanged;
     public static Action<int> OnMatchChanged;
-
     public static Action OnComboChanged;
+
+    public static Action OnGameOver;
 
     void Awake()
     {
@@ -40,11 +41,15 @@ public class GameManager : MonoBehaviour
         CardManager.OnCardClicked += IncrementTurnCount;
         CardManager.OnCardsMatched += IncrementMatchCount;
         CardManager.OnGameLoaded += LoadGame;
+        OnMatchChanged += GameOver;
+
     }
     void OnDisable()
     {
         CardManager.OnCardClicked -= IncrementTurnCount;
         CardManager.OnCardsMatched -= IncrementMatchCount;
+        CardManager.OnGameLoaded -= LoadGame;
+        OnMatchChanged -= GameOver;
     }
     public int GetTurnCount() => turnCount;
     public int GetMatchCount() => matchCount;
@@ -87,5 +92,35 @@ public class GameManager : MonoBehaviour
         OnTurnChanged?.Invoke(turnCount);
         OnMatchChanged?.Invoke(matchCount);
     }
+
+
+    private bool IsGameOver()
+    {
+        int totalPairs = grid.GetPairCount();
+        return matchCount >= totalPairs;
+    }
+
+    private void GameOver(int _)
+    {
+
+        if (!IsGameOver())
+            return;
+        Debug.Log("Game Over! Total Turns: " + turnCount);
+        // Optional: Show Game Over UI, reset game, etc.
+        ResetGame();
+        OnGameOver?.Invoke();
+    }
+
+    private void ResetGame()
+    {
+        turnCount = 0;
+        matchCount = 0;
+        comboCount = 0;
+        OnTurnChanged?.Invoke(turnCount);
+        OnMatchChanged?.Invoke(matchCount);
+        OnComboChanged?.Invoke();
+        SaveLoadManager.Instance.DeleteSave();
+    }
+
 }
 
