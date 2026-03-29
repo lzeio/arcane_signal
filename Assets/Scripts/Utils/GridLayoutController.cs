@@ -6,6 +6,12 @@ public class GridLayoutController : MonoBehaviour
     [SerializeField] private LayoutConfigSO layoutConfig;
     [SerializeField] private GridLayoutGroup layoutGroup;
 
+    public static GridLayoutController Instance { get; private set; }
+
+    void Awake()
+    {
+        Instance = this;
+    }
     public void Setup()
     {
         if (layoutConfig.rows <= 0 || layoutConfig.columns <= 0)
@@ -44,4 +50,7 @@ public class GridLayoutController : MonoBehaviour
     public Transform GetParent() => layoutGroup.transform;
 
     public int GetPairCount() => (layoutConfig.rows * layoutConfig.columns) / 2;
+
+    public int GetRows() => layoutConfig.rows;
+    public int GetCols() => layoutConfig.columns;
 }

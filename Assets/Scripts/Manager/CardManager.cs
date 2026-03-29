@@ -18,6 +18,8 @@ public class CardManager : MonoBehaviour
     [SerializeField] private Card cardPrefab;
     [SerializeField] private Sprite backSprite;
 
+
+    private List<Card> allCards = new List<Card>();
     private List<Card> selectionBuffer = new List<Card>();
     void Awake()
     {
@@ -57,6 +59,7 @@ public class CardManager : MonoBehaviour
         {
             Card card = Instantiate(cardPrefab, GameManager.Instance.GetLayoutGroupTransform());
             card.Init(cardSO.cardSprite, cardSO.id);
+            allCards.Add(card);
         }
     }
 
@@ -127,4 +130,6 @@ public class CardManager : MonoBehaviour
         }
     }
     public Sprite GetBackSprite() => backSprite;
+
+    public List<Card> GetAllCards() => allCards;
 }

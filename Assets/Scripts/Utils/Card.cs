@@ -9,7 +9,7 @@ public class Card : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Sprite frontSprite;
 
     public int id = -1;
-
+    public bool isMatched = false;
     [SerializeField] private float flipDuration = 0.15f;
     public bool IsFlipping => isFlipping;
     public void OnPointerClick(PointerEventData eventData)
@@ -96,5 +96,6 @@ public class Card : MonoBehaviour, IPointerClickHandler
     public void Matched()
     {
         cardSprite.enabled = false;
+        isMatched = true;
     }
 }
