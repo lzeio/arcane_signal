@@ -86,7 +86,7 @@ public class Card : MonoBehaviour, IPointerClickHandler
 
     private void OnFlipComplete(Card card)
     {
-        CardManager.OnCardsClicked?.Invoke(card);
+        CardManager.OnCardClicked?.Invoke(card);
     }
 
     public void Matched()
