@@ -7,12 +7,14 @@ public class CardManager : MonoBehaviour
 {
     public static CardManager Instance { get; private set; }
 
+    // Events
     public static Action OnGameInit;
     public static Action<Card> OnCardClicked;
 
+    // Inspector fields 
     [SerializeField] private AssetPackSO assetPack;
     [SerializeField] private Card cardPrefab;
-    public Sprite backSprite;
+    [SerializeField] private Sprite backSprite;
 
     private Card firstSelected;
     private bool isBusy;
@@ -52,7 +54,7 @@ public class CardManager : MonoBehaviour
         foreach (var cardSO in deck)
         {
             Card card = Instantiate(cardPrefab, GameManager.Instance.GetLayoutGroupTransform());
-            card.SetCardData(cardSO.cardSprite, cardSO.id);
+            card.Init(cardSO.cardSprite, cardSO.id);
         }
     }
 
@@ -82,7 +84,7 @@ public class CardManager : MonoBehaviour
 
     private void HandleCardClick(Card clicked)
     {
-        if (isBusy || clicked == firstSelected) return;
+        if (clicked == firstSelected) return;
 
         if (firstSelected == null)
         {
@@ -90,27 +92,25 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        StartCoroutine(CheckMatch(clicked));
+        Card first = firstSelected;
+        firstSelected = null;
+
+        CheckMatch(first, clicked);
     }
 
-    private IEnumerator CheckMatch(Card second)
+    private void CheckMatch(Card first, Card second)
     {
-        isBusy = true;
-
-        yield return new WaitForSeconds(0.5f);
-
-        if (second.id == firstSelected.id)
+        if (second.id == first.id)
         {
             second.Matched();
-            firstSelected.Matched();
+            first.Matched();
+            OnCardsMatched?.Invoke();
         }
         else
         {
             second.Unflip();
-            firstSelected.Unflip();
+            first.Unflip();
         }
-
-        firstSelected = null;
-        isBusy = false;
     }
+    public Sprite GetBackSprite() => backSprite;
 }
