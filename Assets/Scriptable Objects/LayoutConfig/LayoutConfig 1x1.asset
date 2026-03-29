@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: LayoutConfig 1x1
   m_EditorClassIdentifier: 
   rows: 4
-  columns: 5
+  columns: 4
