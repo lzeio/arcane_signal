@@ -1,50 +1,67 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public LayoutConfigSO layoutConfig;
-
-    public GridLayoutGroup layoutGroup;
-
     public static GameManager Instance { get; private set; }
+
+    [SerializeField] private GridLayoutController grid;
+
+    private int turnCount = 0;
+    private int matchCount = 0;
+
+    public static Action<int> OnTurnChanged;
+    public static Action<int> OnMatchChanged;
 
     void Awake()
     {
-        Instance = this;
-        if (Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+        Instance = this;
     }
+
+
     void Start()
     {
-        SetupLayoutGroup();
+        grid.Setup();
     }
-    public void SetupLayoutGroup()
-    {
-        if (layoutGroup != null)
-        {
 
-            if (layoutConfig.rows <= 0 || layoutConfig.columns <= 0 || layoutConfig.rows > 4 || layoutConfig.columns > 5)
-            {
-                Debug.LogError("Invalid layout configuration! Rows and columns must be greater than 0 and less than 4 and 5 respectively.");
-                return;
-            }
-            layoutGroup.constraint = layoutConfig.rows > layoutConfig.columns ? GridLayoutGroup.Constraint.FixedRowCount : GridLayoutGroup.Constraint.FixedColumnCount;
-            layoutGroup.constraintCount = layoutConfig.rows > layoutConfig.columns ? layoutConfig.rows : layoutConfig.columns;
-        }
+    void OnEnable()
+    {
+        CardManager.OnCardClicked += IncrementTurnCount;
+        CardManager.OnCardsMatched += IncrementMatchCount;
+    }
+    void OnDisable()
+    {
+        CardManager.OnCardClicked -= IncrementTurnCount;
+        CardManager.OnCardsMatched -= IncrementMatchCount;
     }
 
     public Transform GetLayoutGroupTransform()
     {
-        return layoutGroup.transform;
+        return grid.GetParent();
     }
 
     public int GetTotalCards()
     {
-        return (layoutConfig.rows * layoutConfig.columns) / 2;
+        return grid.GetPairCount();
     }
+
+    private void IncrementTurnCount(Card _)
+    {
+        turnCount++;
+        OnTurnChanged?.Invoke(turnCount);
+    }
+
+    private void IncrementMatchCount()
+    {
+        matchCount++;
+        OnMatchChanged?.Invoke(matchCount);
+    }
+
+    public int GetTurnCount() => turnCount;
+    public int GetMatchCount() => matchCount;
 }
