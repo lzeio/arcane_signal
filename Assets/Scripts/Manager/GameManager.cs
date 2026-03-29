@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     public static Action<int> OnTurnChanged;
     public static Action<int> OnMatchChanged;
 
+    public static Action OnComboChanged;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -46,6 +48,12 @@ public class GameManager : MonoBehaviour
     public int GetTurnCount() => turnCount;
     public int GetMatchCount() => matchCount;
     public int GetComboCount() => comboCount;
+
+    public void ResetCombo()
+    {
+        comboCount = 0;
+        OnComboChanged?.Invoke();
+    }
     public Transform GetLayoutGroupTransform()
     {
         return grid.GetParent();
@@ -59,7 +67,6 @@ public class GameManager : MonoBehaviour
     private void IncrementTurnCount(Card _)
     {
         turnCount++;
-        comboCount = 0;
         OnTurnChanged?.Invoke(turnCount);
     }
 

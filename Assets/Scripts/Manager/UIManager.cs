@@ -15,12 +15,15 @@ public class UIManager : MonoBehaviour
         GameManager.OnTurnChanged += UpdateTurnCounter;
         GameManager.OnMatchChanged += UpdateMatchCounter;
         GameManager.OnMatchChanged += UpdateComboCounter;
+        GameManager.OnComboChanged += DisableComboCounter;
     }
 
     void OnDisable()
     {
         GameManager.OnTurnChanged -= UpdateTurnCounter;
         GameManager.OnMatchChanged -= UpdateMatchCounter;
+        GameManager.OnMatchChanged -= UpdateComboCounter;
+        GameManager.OnComboChanged -= DisableComboCounter;
     }
 
     private void UpdateTurnCounter(int turns)
@@ -42,9 +45,10 @@ public class UIManager : MonoBehaviour
             comboCounterText.text = $"Combo x{comboCount}";
             comboCounterText.gameObject.SetActive(true);
         }
-        else
-        {
-            comboCounterText.gameObject.SetActive(false);
-        }
+    }
+
+    private void DisableComboCounter()
+    {
+        comboCounterText.gameObject.SetActive(false);
     }
 }

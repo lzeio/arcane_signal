@@ -32,11 +32,15 @@ public class CardManager : MonoBehaviour
 
         Instance = this;
 
+
+    }
+
+    void OnEnable()
+    {
         OnGameInit += InitGameCards;
         OnGameLoaded += LoadGameCards;
         OnCardClicked += HandleCardClick;
     }
-
     void OnDisable()
     {
         OnGameInit -= InitGameCards;
@@ -134,7 +138,7 @@ public class CardManager : MonoBehaviour
 
     private IEnumerator CheckMatchRoutine(Card first, Card second)
     {
-        // Optional: wait for flip animation to finish
+
         yield return new WaitUntil(() => !first.IsFlipping && !second.IsFlipping);
 
         if (first.id == second.id)
@@ -146,7 +150,7 @@ public class CardManager : MonoBehaviour
         else
         {
             yield return new WaitForSeconds(0.3f); // small delay feels good
-
+            GameManager.Instance.ResetCombo();
             first.Unflip();
             second.Unflip();
         }
