@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -9,6 +11,8 @@ public class GameManager : MonoBehaviour
 
     private int turnCount = 0;
     private int matchCount = 0;
+
+    private int comboCount = 0;
 
     public static Action<int> OnTurnChanged;
     public static Action<int> OnMatchChanged;
@@ -39,7 +43,9 @@ public class GameManager : MonoBehaviour
         CardManager.OnCardClicked -= IncrementTurnCount;
         CardManager.OnCardsMatched -= IncrementMatchCount;
     }
-
+    public int GetTurnCount() => turnCount;
+    public int GetMatchCount() => matchCount;
+    public int GetComboCount() => comboCount;
     public Transform GetLayoutGroupTransform()
     {
         return grid.GetParent();
@@ -53,15 +59,16 @@ public class GameManager : MonoBehaviour
     private void IncrementTurnCount(Card _)
     {
         turnCount++;
+        comboCount = 0;
         OnTurnChanged?.Invoke(turnCount);
     }
 
     private void IncrementMatchCount()
     {
         matchCount++;
+        comboCount++;
         OnMatchChanged?.Invoke(matchCount);
     }
 
-    public int GetTurnCount() => turnCount;
-    public int GetMatchCount() => matchCount;
 }
+

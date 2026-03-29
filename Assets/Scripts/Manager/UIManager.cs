@@ -8,12 +8,13 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI matchCounterText;
     [SerializeField] private TextMeshProUGUI turnCounterText;
-
+    [SerializeField] private TextMeshProUGUI comboCounterText;
 
     void Awake()
     {
         GameManager.OnTurnChanged += UpdateTurnCounter;
         GameManager.OnMatchChanged += UpdateMatchCounter;
+        GameManager.OnMatchChanged += UpdateComboCounter;
     }
 
     void OnDisable()
@@ -31,5 +32,19 @@ public class UIManager : MonoBehaviour
     private void UpdateMatchCounter(int matches)
     {
         matchCounterText.text = $"Matches\n<color=red>{matches}</color>";
+    }
+
+    private void UpdateComboCounter(int _)
+    {
+        int comboCount = GameManager.Instance.GetComboCount();
+        if (comboCount > 1)
+        {
+            comboCounterText.text = $"Combo x{comboCount}";
+            comboCounterText.gameObject.SetActive(true);
+        }
+        else
+        {
+            comboCounterText.gameObject.SetActive(false);
+        }
     }
 }
